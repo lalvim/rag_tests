@@ -22,10 +22,10 @@ if __name__=='__main__':
 
 
     with engine.connect() as connection:
-        query = text("SELECT * FROM public.text_fragments ORDER BY id ASC LIMIT 1")
+        query = text("SELECT * FROM public.pages ORDER BY id ASC LIMIT 1")
         result = connection.execute(query)
         for row in result:
-            print(row[1])
+            print(row[2])
 
 
 
