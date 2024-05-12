@@ -894,6 +894,14 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "psycopg2-binary"
+version = "2.9.9"
+description = "psycopg2 - Python-PostgreSQL Database Adapter"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "pyarrow"
 version = "16.0.0"
 description = "Python library for Apache Arrow"
@@ -1404,7 +1412,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "956c9a1d6e8143956231ff5ac23fb7ed3dcd3f8fb2c6950171398f9f9349b08f"
+content-hash = "12d10c4a6d2d32554ef47ab400fa9402f5058aedf46341f46e7c305b9c43f043"
 
 [metadata.files]
 aiohttp = []
@@ -1469,6 +1477,7 @@ pandas = []
 pluggy = []
 portalocker = []
 protobuf = []
+psycopg2-binary = []
 pyarrow = []
 pyarrow-hotfix = []
 pydantic = []
