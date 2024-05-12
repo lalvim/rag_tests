@@ -1,22 +1,4 @@
 import requests
-import simplejson
-
-def json_parser(data):
-
-    textos = []
-    for item in data:
-        print(item)
-        """
-        if 'webPageFragment' in item and item['webPageFragment'] and 'content' in item['webPageFragment']:
-            textos.append(item['webPageFragment']['content'])
-        if 'answer' in item:
-            textos.append(item['answer'])
-        if 'textFragment' in item and item['textFragment']:
-            textos.append(item['textFragment'])
-        """
-
-    return textos    
-
 
 def do_request(url,data):
     try:
@@ -46,15 +28,5 @@ if __name__ == '__main__':
             simplejson.dump(data, arquivo)
 
         print("JSON salvo com sucesso em", caminho_arquivo)
-        #question = response.json()[0]['text']
-        #answer = response.json()[1]['text']
-        #print(response.json())
-        #print(json_parser(data))
-        
-        #json_str = simplejson.dumps(response.json(), indent=4, sort_keys=True)
-        #print(json_str)
-
-        #print(question)
-        #print(answer)
-
+    
     
