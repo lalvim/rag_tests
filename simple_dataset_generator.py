@@ -11,10 +11,8 @@ import os
 
 def normalize(text):
     
-    clean_text = unicodedata.normalize("NFKD", text)
+    return text.encode('raw_unicode_escape').decode('unicode-escape')
     
-    return clean_text
-
 if __name__=='__main__':
 
 
@@ -41,7 +39,6 @@ if __name__=='__main__':
             c = [normalize(row[2])]
             contexts.append(c)    
     
-
     dataset = EvaluationDataset()
     dataset.generate_goldens(
         synthesizer=synthesizer,
