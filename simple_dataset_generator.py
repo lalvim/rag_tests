@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from dotenv import dotenv_values
 
 from deepeval.synthesizer import Synthesizer
+from deepeval.dataset import EvaluationDataset
 
 import unicodedata
 import re
@@ -40,11 +41,14 @@ if __name__=='__main__':
             c = [normalize(row[2])]
             contexts.append(c)    
     
-    synthesizer.generate_goldens(
+
+    dataset = EvaluationDataset()
+    dataset.generate_goldens(
+        synthesizer=synthesizer,
         contexts=contexts
     )
 
-    synthesizer.save_as(
+    dataset.save_as(
     file_type='json', # or 'csv'
     directory="./synthetic_data"
     )
