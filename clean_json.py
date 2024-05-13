@@ -19,7 +19,7 @@ def load_fixed_json(input_file):
     return data
 
 # Caminho para o arquivo JSON de entrada e o arquivo de saída corrigido
-input_file = '20240513_151242.json'
+input_file = input()
 
 output_file = './synthetic_data/dados_corrigidos.json'
 
