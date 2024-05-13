@@ -38,7 +38,20 @@ if __name__=='__main__':
         for row in result:
             c = [normalize(row[2])]
             contexts.append(c)    
-    
+
+    #dataset = EvaluationDataset()
+    synthesizer.generate_goldens(
+        contexts=contexts,
+        include_expected_output = True
+    )
+
+    synthesizer.save_as(
+    file_type='json', # or 'csv'
+    directory="./synthetic_data"
+    )
+
+
+    """
     dataset = EvaluationDataset()
     dataset.generate_goldens(
         synthesizer=synthesizer,
@@ -49,5 +62,5 @@ if __name__=='__main__':
     file_type='json', # or 'csv'
     directory="./synthetic_data"
     )
-
+    """
 
