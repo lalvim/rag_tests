@@ -29,7 +29,7 @@ if __name__=='__main__':
 
     engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
-    synthesizer = Synthesizer()
+    synthesizer = Synthesizer(model="gpt-3.5-turbo")
 
     n_pages  = 2
     contexts = []
