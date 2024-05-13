@@ -4,8 +4,15 @@ from dotenv import dotenv_values
 
 from deepeval.synthesizer import Synthesizer
 
+import unicodedata
+import re
 import os
 
+def normalize(text):
+    
+    clean_text = unicodedata.normalize("NFKD", text)
+    
+    return clean_text
 
 if __name__=='__main__':
 
@@ -30,9 +37,9 @@ if __name__=='__main__':
         query = text(f"SELECT * FROM public.pages ORDER BY id ASC LIMIT {n_pages}")
         result = connection.execute(query)
         for row in result:
-            c = [row[2]]
+            c = [normalize(row[2])]
             contexts.append(c)    
-
+    
     synthesizer.generate_goldens(
         contexts=contexts
     )
