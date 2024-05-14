@@ -3,7 +3,7 @@ import pytest
 from dotenv import dotenv_values
 
 from deepeval.test_case import LLMTestCase
-from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric, ContextualRelevancyMetric
+from deepeval.metrics import ToxicityMetric, BiasMetric, FaithfulnessMetric, AnswerRelevancyMetric, ContextualRelevancyMetric, HallucinationMetric, ContextualPrecisionMetric, ContextualRecallMetric
 from deepeval import evaluate
 from deepeval import assert_test
 from deepeval.dataset import EvaluationDataset
@@ -30,6 +30,9 @@ def get_text_of_answer_question(dictionaries):
             return  dictionary.get("text")
     return None
 
+
+MODEL = "gpt-3.5-turbo"
+
 if __name__=='__main__':
 
     env_vars = dotenv_values(".env")
@@ -49,7 +52,6 @@ if __name__=='__main__':
     
     for test_case in dataset:
         parsed_input = normalize(test_case.input)
-        print(parsed_input)
         llm_question = {'query': parsed_input}
         response = do_request(url,llm_question)
         if response:
@@ -62,13 +64,46 @@ if __name__=='__main__':
     
     c_relevancy = ContextualRelevancyMetric(
         threshold=0.7,
-        model="gpt-3.5-turbo",
+        model=MODEL,
         include_reason=True)
 
     a_relevancy = AnswerRelevancyMetric(
         threshold=0.7,
-        model="gpt-3.5-turbo",
+        model=MODEL,
         include_reason=True)
 
+    h_metric = HallucinationMetric(
+        threshold=0.7,
+        model=MODEL,
+        include_reason=True)
 
-    x = evaluate(dataset.test_cases, [a_relevancy, c_relevancy])    
+    f_metric = FaithfulnessMetric(
+        threshold=0.7,
+        model=MODEL,
+        include_reason=True)
+
+    c_precision = ContextualPrecisionMetric(
+        threshold=0.7,
+        model=MODEL,
+        include_reason=True
+    )
+
+    c_recall = ContextualRecallMetric(
+        threshold=0.7,
+        model=MODEL,
+        include_reason=True
+    )
+
+    b_metric = BiasMetric(
+        threshold=0.5,
+        model=MODEL,
+        include_reason=True 
+    )
+
+    t_metric = ToxicityMetric(
+        threshold=0.5,
+        model=MODEL,
+        include_reason=True 
+    )
+
+    x = evaluate(dataset.test_cases, [a_relevancy, c_relevancy, h_metric, f_metric, c_precision, c_recall, b_metric, t_metric])    
