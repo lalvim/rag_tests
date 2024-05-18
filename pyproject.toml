@@ -12,6 +12,10 @@ unicodedata2 = "^15.1.0"
 python-dotenv = "^1.0.1"
 SQLAlchemy = "^2.0.30"
 psycopg2-binary = "^2.9.9"
+transformers = "^4.41.0"
+torch = "^2.3.0"
+accelerate = "^0.30.1"
+flash-attention = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 
