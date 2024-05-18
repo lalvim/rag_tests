@@ -52,6 +52,9 @@ if __name__=='__main__':
     
     for test_case in dataset:
         parsed_input = normalize(test_case.input)
+        if len(parsed_input) > 200:
+           parsed_input = parsed_input[:200]
+           print("out of limit") 
         llm_question = {'query': parsed_input}
         response = do_request(url,llm_question)
         if response:
@@ -93,7 +96,7 @@ if __name__=='__main__':
         model=MODEL,
         include_reason=True
     )
-
+    """
     b_metric = BiasMetric(
         threshold=0.5,
         model=MODEL,
@@ -105,5 +108,5 @@ if __name__=='__main__':
         model=MODEL,
         include_reason=True 
     )
-
-    x = evaluate(dataset.test_cases, [a_relevancy, c_relevancy, h_metric, f_metric, c_precision, c_recall, b_metric, t_metric])    
+    """
+    x = evaluate(dataset.test_cases, [a_relevancy, c_relevancy, h_metric, f_metric, c_precision, c_recall])    
