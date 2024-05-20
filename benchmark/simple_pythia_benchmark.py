@@ -7,8 +7,8 @@ from deepeval.metrics import ToxicityMetric, BiasMetric, FaithfulnessMetric, Ans
 from deepeval import evaluate
 from deepeval import assert_test
 from deepeval.dataset import EvaluationDataset
-from simple_pythia_request import do_request
-from json_pythia_parser import json_parser
+from simple_scripts.simple_pythia_ask_request import do_request
+from benchmark.json_pythia_parser import json_parser
 import simplejson
 import unicodedata
 import re
@@ -42,7 +42,7 @@ if __name__=='__main__':
  
     dataset = EvaluationDataset()
     dataset.add_test_cases_from_json_file(
-        file_path="./synthetic_data/dados_corrigidos.json",
+        file_path="./synthetic_data/contratos_20.json",
         input_key_name="input",
         actual_output_key_name="actual_output",
         expected_output_key_name="expected_output",
@@ -109,4 +109,5 @@ if __name__=='__main__':
         include_reason=True 
     )
     """
-    x = evaluate(dataset.test_cases, [a_relevancy, c_relevancy, h_metric, f_metric, c_precision, c_recall])    
+    #x = evaluate(dataset.test_cases, [a_relevancy, c_relevancy, h_metric, f_metric, c_precision, c_recall])    
+    x = evaluate(dataset.test_cases, [a_relevancy, h_metric, f_metric ])    

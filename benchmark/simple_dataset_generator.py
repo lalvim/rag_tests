@@ -30,10 +30,15 @@ if __name__=='__main__':
 
     synthesizer = Synthesizer(model="gpt-3.5-turbo")
 
-    n_pages  = 2
+    n_pages  = 20
     contexts = []
     with engine.connect() as connection:
-        query = text(f"SELECT * FROM public.pages ORDER BY id ASC LIMIT {n_pages}")
+        query = text(f"""SELECT * FROM 
+                        public.pages as p,
+                        public.documents as d
+                        where p.document_id = d.id and
+                        d.knowledge_id = 12
+                        LIMIT {n_pages}""")
         result = connection.execute(query)
         for row in result:
             c = [normalize(row[2])]
@@ -42,7 +47,8 @@ if __name__=='__main__':
     #dataset = EvaluationDataset()
     synthesizer.generate_goldens(
         contexts=contexts,
-        include_expected_output = True
+        include_expected_output = True,
+        max_goldens_per_context = 1
     )
 
     synthesizer.save_as(
