@@ -32,7 +32,7 @@ if __name__ == '__main__':
     else:
         print("Nenhum UUID encontrado na URL")    
 
-    url = f'http://127.0.0.1:3333/chat/api/{uuid}/load'
+    url = f'{url}api/{uuid}/load'
     response = requests.get(url)
     if response:
         caminho_arquivo = "dados.json"
