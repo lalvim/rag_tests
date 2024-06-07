@@ -4,6 +4,8 @@ import simplejson
 import unicodedata
 import re
 import codecs 
+import os
+from dotenv import dotenv_values
 
 def normalize(text):
 
@@ -18,21 +20,18 @@ def normalize(text):
 
 if __name__ == '__main__':
 
-    print('Entre com a pergunta : ')
-    data = {'query': normalize(input())}
-    url = "http://127.0.0.1:3333/chat/"
-  
-    response = requests.post(url,json=data)
-    pattern = r"[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
 
-    match = re.search(pattern, response.url)
-    if match:
-        uuid = match.group(0)
-        print("UUID encontrado:", uuid)
-    else:
-        print("Nenhum UUID encontrado na URL")    
-
-    url = f'{url}api/{uuid}/load'
+    env_vars = dotenv_values(".env")
+    
+    token  = env_vars["PYTHIA_TOKEN"]
+    uuid   = env_vars["PYTHIA_UUID"]
+    
+    url = f"http://127.0.0.1:3333/api/chat/{uuid}/load"
+    headers = {
+    "Authorization": f"Bearer {token}",
+    "Content-Type": "application/json"
+    }
+      
     response = requests.get(url)
     if response:
         caminho_arquivo = "dados.json"

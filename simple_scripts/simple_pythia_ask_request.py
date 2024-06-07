@@ -5,6 +5,9 @@ import unicodedata
 import re
 import codecs 
 
+import os
+from dotenv import dotenv_values
+
 def normalize(text):
 
     clean_text = text.encode('raw_unicode_escape').decode('unicode-escape')
@@ -16,9 +19,9 @@ def normalize(text):
     return clean_text
 
 
-def do_request(url,data):
+def do_request(url,data,headers):
     try:
-        response = requests.post(url,json=data)
+        response = requests.post(url,json=data,headers=headers)
         print("Status code:", response.status_code)
         if response.status_code == 200:
             return response
@@ -32,11 +35,19 @@ def do_request(url,data):
 
 if __name__ == '__main__':
 
+    env_vars = dotenv_values(".env")
+    
+    token  = env_vars["PYTHIA_TOKEN"]
+    uuid   = env_vars["PYTHIA_UUID"]
+ 
     print('Entre com a pergunta : ')
     data = {'query': normalize(input())}
-    url = "http://127.0.0.1:3333/chat/api/bc00edf6-e3f7-4e61-b2b7-93119fa7e669/ask"
-  
-    response = do_request(url,data)
+    url = f"http://127.0.0.1:3333/api/chat/{uuid}/ask"
+    headers = {
+    "Authorization": f"Bearer {token}",
+    "Content-Type": "application/json"
+    }
+    response = do_request(url,data,headers)
     if response:
         caminho_arquivo = "dados.json"
         data = response.json()
