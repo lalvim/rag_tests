@@ -19,9 +19,12 @@ def load_fixed_json(input_file):
     return data
 
 # Caminho para o arquivo JSON de entrada e o arquivo de saída corrigido
+print("Entre com o nome do arquivo de entrada : ")
 input_file = input()
+print("Entre com o nome do arquivo de saída: ")
+output_file = input()
 
-output_file = './synthetic_data/contratos_20.json'
+output_file = './synthetic_data/'+output_file
 
 # Chamando a função para corrigir o JSON
 fixed_data = load_fixed_json('./synthetic_data/'+input_file)
