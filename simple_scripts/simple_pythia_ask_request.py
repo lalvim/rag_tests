@@ -38,12 +38,11 @@ if __name__ == '__main__':
     env_vars = dotenv_values(".env")
     
     token  = env_vars["PYTHIA_TOKEN"]
-    uuid   = env_vars["PYTHIA_UUID"]
+    uuid   = env_vars["PYTHIA_DIALOG_UUID"]
  
     print('Entre com a pergunta : ')
     data = {'query': normalize(input())}
     url = f"http://127.0.0.1:3333/api/chat/{uuid}/ask"
-    print(uuid)
     headers = {
     "Authorization": f"Bearer {token}",
     "Content-Type": "application/json"
