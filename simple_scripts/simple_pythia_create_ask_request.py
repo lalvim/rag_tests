@@ -43,21 +43,18 @@ if __name__ == '__main__':
     "Content-Type": "application/json"
     }
     url = 'http://127.0.0.1:3333/api/dialogs'
-    #response = requests.post(url,json=data,headers=headers)
-    #print("Status code:", response.status_code)
-        
     response = do_request(url,None,headers=headers)
     if response:
        uuid = response.json()['uuid']
     else:
        print("no uuid")
        quit()
-        
+
     print('Entre com a pergunta : ')
     data = {'query': normalize(input())}
     url = f"http://127.0.0.1:3333/api/chat/{uuid}/ask"
     
-    response = do_request(url,data,headers)
+    response = do_request(url,data,headers=headers)
     if response:
         caminho_arquivo = "dados.json"
         data = response.json()

@@ -1,3 +1,4 @@
+import sys
 import os
 import pytest
 from dotenv import dotenv_values
@@ -31,19 +32,23 @@ def get_text_of_answer_question(dictionaries):
 
 
 MODEL   = "gpt-3.5-turbo"
-URL     = "http://127.0.0.1:3333/chat/"
-PATTERN = r"[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
 
 if __name__=='__main__':
 
-    
+    input_filename = sys.argv[1]
     env_vars = dotenv_values(".env")
     
     os.environ["OPENAI_API_KEY"] = env_vars["OPENAI_API_KEY"]
- 
+    token  = env_vars["PYTHIA_TOKEN"]
+    headers = {
+    "Authorization": f"Bearer {token}",
+    "Content-Type": "application/json"
+    }
+    create_url = 'http://127.0.0.1:3333/api/dialogs'
+
     dataset = EvaluationDataset()
     dataset.add_test_cases_from_json_file(
-        file_path="./synthetic_data/contratos_20.json",
+        file_path=f"./synthetic_data/{input_filename}.json",
         input_key_name="input",
         actual_output_key_name="actual_output",
         expected_output_key_name="expected_output",
@@ -52,22 +57,19 @@ if __name__=='__main__':
     )
     
     for test_case in dataset:
+        
+        
+        response = requests.post(create_url,json=None,headers=headers)
+        uuid = response.json()['uuid']
+        
         parsed_input = normalize(test_case.input)
         if len(parsed_input) > 200:
            parsed_input = parsed_input[:200]
            print("out of limit") 
         llm_question = {'query': parsed_input}
+        ask_url = f"http://127.0.0.1:3333/api/chat/{uuid}/ask"
     
-        response = requests.post(URL,json=llm_question)
-        match = re.search(PATTERN, response.url)
-        if match:
-            uuid = match.group(0)
-            print("UUID encontrado:", uuid)
-        else:
-            print("Nenhum UUID encontrado na URL")    
-
-        url_load = f'{URL}api/{uuid}/load'
-        response = requests.get(url_load)
+        response = requests.get(ask_url,json=llm_question,headers=headers)
         
         if response:
            data = response.json()['messages']

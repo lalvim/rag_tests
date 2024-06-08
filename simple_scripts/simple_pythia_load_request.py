@@ -24,7 +24,7 @@ if __name__ == '__main__':
     env_vars = dotenv_values(".env")
     
     token  = env_vars["PYTHIA_TOKEN"]
-    uuid   = env_vars["PYTHIA_UUID"]
+    uuid   = env_vars["PYTHIA_DIALOG_UUID"]
     
     url = f"http://127.0.0.1:3333/api/chat/{uuid}/load"
     headers = {

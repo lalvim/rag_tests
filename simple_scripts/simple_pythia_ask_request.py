@@ -43,6 +43,7 @@ if __name__ == '__main__':
     print('Entre com a pergunta : ')
     data = {'query': normalize(input())}
     url = f"http://127.0.0.1:3333/api/chat/{uuid}/ask"
+    print(uuid)
     headers = {
     "Authorization": f"Bearer {token}",
     "Content-Type": "application/json"
