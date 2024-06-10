@@ -13,6 +13,7 @@ import simplejson
 import unicodedata
 import re
 import requests 
+from tqdm import tqdm
 
 def normalize(text):
     clean_text = text.encode('raw_unicode_escape').decode('unicode-escape')
@@ -27,11 +28,13 @@ def get_text_of_answer_question(dictionaries):
     text = []
     for dictionary in dictionaries:
         if dictionary.get("type") == "ANSWER_QUESTION":
-            return  dictionary.get("text")
-    return None
+            return  dictionary.get("text"),dictionary.get("uuid")
+    return None, None
 
 
 MODEL   = "gpt-3.5-turbo"
+#MODEL   = "gpt-4o"
+TH = 0.5
 
 if __name__=='__main__':
 
@@ -48,7 +51,7 @@ if __name__=='__main__':
 
     dataset = EvaluationDataset()
     dataset.add_test_cases_from_json_file(
-        file_path=f"./synthetic_data/{input_filename}.json",
+        file_path=f"./synthetic_data/{input_filename}",
         input_key_name="input",
         actual_output_key_name="actual_output",
         expected_output_key_name="expected_output",
@@ -56,72 +59,82 @@ if __name__=='__main__':
         retrieval_context_key_name="retrieval_context",
     )
     
-    for test_case in dataset:
-        
-        
+    for test_case in tqdm(dataset):
+                
         response = requests.post(create_url,json=None,headers=headers)
-        uuid = response.json()['uuid']
+        dialog_uuid = response.json()['uuid']
         
         parsed_input = normalize(test_case.input)
-        if len(parsed_input) > 200:
-           parsed_input = parsed_input[:200]
+        if len(parsed_input) > 300:
+           parsed_input = parsed_input[:300]
            print("out of limit") 
-        llm_question = {'query': parsed_input}
-        ask_url = f"http://127.0.0.1:3333/api/chat/{uuid}/ask"
-    
-        response = requests.get(ask_url,json=llm_question,headers=headers)
         
-        if response:
-           data = response.json()['messages']
-           r = get_text_of_answer_question(data)
-           _,chunks = json_parser(data)
-            
-           test_case.actual_output = r
-           test_case.retrieval_context = chunks
-    
+        llm_question = {'query': parsed_input}
+        ask_url = f"http://127.0.0.1:3333/api/chat/{dialog_uuid}/ask"
+
+        print(parsed_input)
+        response = requests.post(ask_url,json=llm_question,headers=headers)
+        #if response:
+        answer = response.json()
+        #print(answer)
+        
+        r,answer_uuid = get_text_of_answer_question(answer)
+        if r:
+            sources_url = f"http://127.0.0.1:3333/api/messages/{answer_uuid}/sources"
+            src_response = requests.get(sources_url,headers=headers)
+            #if src_response:
+            sources = src_response.json()
+            chunks = json_parser(sources)
+        else:
+            print("Exceção: resposta vazia")
+            r = "Não tenho resposta para a pergunta."
+            chunks = ["Sem contetxo."]
+        test_case.actual_output = r
+        test_case.retrieval_context = chunks
+
     c_relevancy = ContextualRelevancyMetric(
-        threshold=0.7,
+        threshold=TH,
         model=MODEL,
         include_reason=True)
 
     a_relevancy = AnswerRelevancyMetric(
-        threshold=0.7,
+        threshold=TH,
         model=MODEL,
         include_reason=True)
 
     h_metric = HallucinationMetric(
-        threshold=0.7,
+        threshold=TH,
         model=MODEL,
         include_reason=True)
 
     f_metric = FaithfulnessMetric(
-        threshold=0.7,
+        threshold=TH,
         model=MODEL,
         include_reason=True)
 
     c_precision = ContextualPrecisionMetric(
-        threshold=0.7,
+        threshold=TH,
         model=MODEL,
         include_reason=True
     )
 
     c_recall = ContextualRecallMetric(
-        threshold=0.7,
+        threshold=TH,
         model=MODEL,
         include_reason=True
     )
     """
     b_metric = BiasMetric(
-        threshold=0.5,
+        threshold=TH,
         model=MODEL,
         include_reason=True 
     )
 
     t_metric = ToxicityMetric(
-        threshold=0.5,
+        threshold=TH,
         model=MODEL,
         include_reason=True 
     )
     """
     #x = evaluate(dataset.test_cases, [a_relevancy, c_relevancy, h_metric, f_metric, c_precision, c_recall])    
-    x = evaluate(dataset.test_cases, [a_relevancy, h_metric, f_metric ])    
+    x = evaluate(dataset.test_cases, [a_relevancy, h_metric, f_metric, c_relevancy, c_precision, c_recall ])    
