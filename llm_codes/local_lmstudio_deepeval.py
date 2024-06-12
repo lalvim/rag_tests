@@ -44,7 +44,7 @@ class Llama3(DeepEvalBaseLLM):
          
     def generate(self, prompt: str) -> str:
         
-          completion = client.chat.completions.create(
+          completion = self.client.chat.completions.create(
           #model="microsoft/Phi-3-mini-4k-instruct-gguf",
           model="LM Studio Community/Meta-Llama-3-8B-Instruct-GGUF",
           messages=[
