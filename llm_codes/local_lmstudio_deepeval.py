@@ -12,8 +12,6 @@ from deepeval import evaluate
 import re
 import torch
 import json
-
-
 from openai import OpenAI
 import subprocess
 
@@ -37,10 +35,10 @@ def get_windows_host_ip():
 class Llama3(DeepEvalBaseLLM):
     def __init__(
         self,
-        model,
-        tokenizer
+        client
     ):
-         pass
+        self.client = client
+         
     def load_model(self, *args, **kwargs):
         return super().load_model(*args, **kwargs)
          
@@ -80,19 +78,19 @@ if __name__=="__main__":
      wip = get_windows_host_ip()
      client = OpenAI(base_url=f"http://{wip}:1234/v1", api_key="lm-studio")
 
+     llama3 = Llama3(client)
+
+     c_relevancy = ContextualRelevancyMetric(
+          threshold=0.7,
+          model=llama3,
+          include_reason=True,
+          async_mode=False)
+
      test_case = LLMTestCase(
           input="Who is the current president of the United States of America?",
           actual_output="Joe Biden",
           retrieval_context=["Joe Biden serves as the current president of America.",'Joe biden is not the president']
      )
-
-     llama3 = Llama3(model=None, tokenizer=None)
-     c_relevancy = ContextualRelevancyMetric(
-          threshold=0.7,
-          model=Llama3,
-          include_reason=True,
-          async_mode=False)
-
 
      x = evaluate([test_case], [c_relevancy])
      print(x)
